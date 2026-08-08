@@ -3,169 +3,180 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 document.addEventListener('DOMContentLoaded', () => {
-  // خلفية الجسيمات
+  // خلفية الجسيمات (تقدر تبدأ فورًا، مش محتاجة بيانات)
   const canvas = document.getElementById('particles-canvas');
   if (canvas) initParticles(canvas);
 
-  const settings = getSettings();
-  const links = getLinks();
-
-  // تسجيل زيارة جديدة
-  incrementVisits();
-
-  // ── اللوجو والاسم ──
-  const logoImg = document.getElementById('logo-img');
-  const logoInitials = document.getElementById('logo-initials');
-  if (settings.logo) {
-    logoImg.src = settings.logo;
-    logoImg.style.display = 'block';
-    logoInitials.style.display = 'none';
+  // ⭐ الإصلاح الأساسي: لازم نجيب البيانات من Firebase الأول
+  // قبل ما نعرض أي حاجة، عشان كل الزوار يشوفوا نفس البيانات المحدثة
+  // (مش بس اللي محفوظ محليًا في متصفحهم)
+  if (typeof loadStoreData === 'function') {
+    loadStoreData(() => initApp());
   } else {
-    logoInitials.textContent = (settings.name || 'ES').trim().slice(0, 2).toUpperCase();
+    initApp();
   }
 
-  document.getElementById('store-name').textContent = settings.name;
-  document.getElementById('store-desc').textContent = settings.description;
-  document.getElementById('footer-name').textContent = settings.name;
-  document.getElementById('footer-year').textContent = new Date().getFullYear();
-  document.title = settings.name;
+  function initApp() {
+    const settings = getSettings();
+    const links = getLinks();
 
-  if (settings.background) {
-    document.body.style.setProperty('--bg-image', `url("${settings.background}")`);
-    document.body.classList.add('has-bg-image');
-  }
+    // تسجيل زيارة جديدة (بعد ما نضمن إننا جبنا آخر عدد زيارات من السحابة)
+    incrementVisits();
 
-  // ── أزرار السوشيال ميديا ──
-  const container = document.getElementById('social-buttons');
-  let rendered = 0;
-
-  PLATFORM_DEFS.forEach((p) => {
-    const url = (links[p.id] || '').trim();
-    if (!url) return;
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.className = 'social-btn';
-    a.style.setProperty('--accent', p.color);
-    a.style.setProperty('--gradient', p.gradient);
-    a.style.setProperty('--accent-shadow', hexToRgba(p.color, 0.4));
-    a.style.setProperty('--accent-border', hexToRgba(p.color, 0.35));
-
-    const displayUrl = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-
-    a.innerHTML = `
-      <span class="btn-glow"></span>
-      <span class="icon-wrap">${ICONS[p.id]}</span>
-      <span class="btn-text">
-        <span class="btn-title">${p.label}</span>
-        <span class="btn-sub">${displayUrl}</span>
-      </span>
-      <span class="btn-arrow">${ARROW_ICON}</span>
-    `;
-
-    a.addEventListener('click', () => incrementClick(p.id));
-    container.appendChild(a);
-    rendered++;
-  });
-
-  if (rendered === 0) {
-    container.innerHTML = '<p class="empty-state">لسه معملناش أي روابط. تقدر تضيفها من لوحة التحكم.</p>';
-  }
-
-  // ── زر مشاركة الموقع (رابط / باركود) ──
-  const pageUrl = window.location.origin + window.location.pathname;
-  const shareBtn = document.getElementById('share-btn');
-  const shareMenu = document.getElementById('share-menu');
-  const shareLinkBtn = document.getElementById('share-link-btn');
-  const shareQrBtn = document.getElementById('share-qr-btn');
-
-  function closeShareMenu() {
-    shareMenu.classList.add('hidden');
-  }
-
-  shareBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    shareMenu.classList.toggle('hidden');
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!shareMenu.classList.contains('hidden') && !shareMenu.contains(e.target) && e.target !== shareBtn) {
-      closeShareMenu();
+    // ── اللوجو والاسم ──
+    const logoImg = document.getElementById('logo-img');
+    const logoInitials = document.getElementById('logo-initials');
+    if (settings.logo) {
+      logoImg.src = settings.logo;
+      logoImg.style.display = 'block';
+      logoInitials.style.display = 'none';
+    } else {
+      logoInitials.textContent = (settings.name || 'ES').trim().slice(0, 2).toUpperCase();
     }
-  });
 
-  // -- مشاركة الرابط --
-  shareLinkBtn.addEventListener('click', async () => {
-    closeShareMenu();
-    const shareData = { title: settings.name, text: settings.name, url: pageUrl };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        return;
-      } catch (err) {
-        if (err && err.name === 'AbortError') return;
-        // فشلت المشاركة عبر النظام → نكمل على النسخ الاحتياطي بالأسفل
-      }
+    document.getElementById('store-name').textContent = settings.name;
+    document.getElementById('store-desc').textContent = settings.description;
+    document.getElementById('footer-name').textContent = settings.name;
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+    document.title = settings.name;
+
+    if (settings.background) {
+      document.body.style.setProperty('--bg-image', `url("${settings.background}")`);
+      document.body.classList.add('has-bg-image');
     }
-    copyToClipboard(pageUrl);
-    showHomeToast('تم نسخ رابط الموقع ✅');
-  });
 
-  // -- مشاركة الباركود --
-  shareQrBtn.addEventListener('click', async () => {
-    closeShareMenu();
+    // ── أزرار السوشيال ميديا ──
+    const container = document.getElementById('social-buttons');
+    let rendered = 0;
 
-    const qrCanvas = document.createElement('canvas');
-    QRCode.toCanvas(qrCanvas, pageUrl, {
-      width: 400,
-      margin: 2,
-      color: { dark: '#0a0908', light: '#ffffff' },
+    PLATFORM_DEFS.forEach((p) => {
+      const url = (links[p.id] || '').trim();
+      if (!url) return;
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.className = 'social-btn';
+      a.style.setProperty('--accent', p.color);
+      a.style.setProperty('--gradient', p.gradient);
+      a.style.setProperty('--accent-shadow', hexToRgba(p.color, 0.4));
+      a.style.setProperty('--accent-border', hexToRgba(p.color, 0.35));
+
+      const displayUrl = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+      a.innerHTML = `
+        <span class="btn-glow"></span>
+        <span class="icon-wrap">${ICONS[p.id]}</span>
+        <span class="btn-text">
+          <span class="btn-title">${p.label}</span>
+          <span class="btn-sub">${displayUrl}</span>
+        </span>
+        <span class="btn-arrow">${ARROW_ICON}</span>
+      `;
+
+      a.addEventListener('click', () => incrementClick(p.id));
+      container.appendChild(a);
+      rendered++;
     });
 
-    const fileName = `${(settings.name || 'elra3y-store').replace(/\s+/g, '-').toLowerCase()}-qr.png`;
+    if (rendered === 0) {
+      container.innerHTML = '<p class="empty-state">لسه معملناش أي روابط. تقدر تضيفها من لوحة التحكم.</p>';
+    }
 
-    qrCanvas.toBlob(async (blob) => {
-      if (!blob) return;
-      const file = new File([blob], fileName, { type: 'image/png' });
+    // ── زر مشاركة الموقع (رابط / باركود) ──
+    const pageUrl = window.location.origin + window.location.pathname;
+    const shareBtn = document.getElementById('share-btn');
+    const shareMenu = document.getElementById('share-menu');
+    const shareLinkBtn = document.getElementById('share-link-btn');
+    const shareQrBtn = document.getElementById('share-qr-btn');
 
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    function closeShareMenu() {
+      shareMenu.classList.add('hidden');
+    }
+
+    shareBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      shareMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!shareMenu.classList.contains('hidden') && !shareMenu.contains(e.target) && e.target !== shareBtn) {
+        closeShareMenu();
+      }
+    });
+
+    // -- مشاركة الرابط --
+    shareLinkBtn.addEventListener('click', async () => {
+      closeShareMenu();
+      const shareData = { title: settings.name, text: settings.name, url: pageUrl };
+      if (navigator.share) {
         try {
-          await navigator.share({ files: [file], title: settings.name, text: settings.name });
+          await navigator.share(shareData);
           return;
         } catch (err) {
           if (err && err.name === 'AbortError') return;
+          // فشلت المشاركة عبر النظام → نكمل على النسخ الاحتياطي بالأسفل
         }
       }
+      copyToClipboard(pageUrl);
+      showHomeToast('تم نسخ رابط الموقع ✅');
+    });
 
-      // نسخ احتياطي: تحميل صورة الباركود مباشرة لو المشاركة غير مدعومة
-      const link = document.createElement('a');
-      link.download = fileName;
-      link.href = URL.createObjectURL(blob);
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(link.href), 2000);
-      showHomeToast('تم تحميل صورة الباركود ✅');
-    }, 'image/png');
-  });
+    // -- مشاركة الباركود --
+    shareQrBtn.addEventListener('click', async () => {
+      closeShareMenu();
 
-  function copyToClipboard(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-    } else {
-      fallbackCopy(text);
+      const qrCanvas = document.createElement('canvas');
+      QRCode.toCanvas(qrCanvas, pageUrl, {
+        width: 400,
+        margin: 2,
+        color: { dark: '#0a0908', light: '#ffffff' },
+      });
+
+      const fileName = `${(settings.name || 'elra3y-store').replace(/\s+/g, '-').toLowerCase()}-qr.png`;
+
+      qrCanvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: settings.name, text: settings.name });
+            return;
+          } catch (err) {
+            if (err && err.name === 'AbortError') return;
+          }
+        }
+
+        // نسخ احتياطي: تحميل صورة الباركود مباشرة لو المشاركة غير مدعومة
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+        showHomeToast('تم تحميل صورة الباركود ✅');
+      }, 'image/png');
+    });
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
     }
-  }
 
-  function fallbackCopy(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
-    document.body.removeChild(ta);
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+      document.body.removeChild(ta);
+    }
   }
 });
 
