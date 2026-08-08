@@ -21,61 +21,193 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elra3y Store</title>
-  <meta name="description" content="كل روابط التواصل الاجتماعي الخاصة بـ Elra3y Store في مكان واحد">
-  <link rel="stylesheet" href="assets/style.css">
+  <title>لوحة إدارة Elra3y Store</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
 
-  <canvas id="particles-canvas"></canvas>
   <div class="radial-glow"></div>
-  <div class="bg-image-layer"></div>
 
-  <!-- زر المشاركة -->
-  <div class="share-wrap">
-    <button id="share-btn" class="share-fab" type="button" aria-label="مشاركة الموقع" title="مشاركة">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <circle cx="18" cy="5" r="3"/>
-        <circle cx="6" cy="12" r="3"/>
-        <circle cx="18" cy="19" r="3"/>
-        <line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/>
-        <line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/>
-      </svg>
-    </button>
-    <div id="share-menu" class="share-menu hidden">
-      <button id="share-link-btn" type="button" class="share-menu-item">
-        <span class="share-menu-icon">🔗</span> مشاركة الرابط
-      </button>
-      <button id="share-qr-btn" type="button" class="share-menu-item">
-        <span class="share-menu-icon">▦</span> مشاركة الباركود
-      </button>
-    </div>
-  </div>
+  <div class="admin-page">
 
-  <div class="page">
-    <div class="content">
-
-      <!-- اللوجو واسم المحل -->
-      <div class="logo-section">
-        <div class="logo-wrap">
-          <div class="logo-ring"></div>
-          <div class="logo-circle">
-            <img id="logo-img" alt="" style="display:none;">
-            <span id="logo-initials" class="logo-initials"></span>
-          </div>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-view" class="login-view">
+      <form id="login-form" class="login-card">
+        <div class="lock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="4" y="10" width="16" height="10" rx="2"/>
+            <path d="M8 10V7a4 4 0 018 0v3"/>
+          </svg>
         </div>
-        <h1 id="store-name" class="store-name">Elra3y Store</h1>
-        <p id="store-desc" class="store-desc"></p>
-        <div class="deco-line"><span></span><span></span><span></span></div>
+        <h1>لوحة إدارة Elra3y Store</h1>
+        <p class="sub">سجّل الدخول لإدارة روابط الموقع وبياناته</p>
+        <div class="field">
+          <label for="login-password">كلمة المرور</label>
+          <input type="password" id="login-password" placeholder="ادخل كلمة المرور" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-primary">تسجيل الدخول</button>
+      </form>
+    </div>
+
+    <!-- لوحة التحكم -->
+    <div id="dashboard-view" class="dashboard hidden">
+      <div class="dashboard-header">
+        <div>
+          <h1>لوحة إدارة Elra3y Store</h1>
+          <div class="subtitle">تحكم كامل في روابط ومحتوى موقعك</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a href="../" class="btn-secondary" style="display:inline-flex;align-items:center;">مشاهدة الموقع</a>
+          <button id="logout-btn" class="btn-danger-outline">تسجيل الخروج</button>
+        </div>
       </div>
 
-      <!-- أزرار السوشيال ميديا -->
-      <div id="social-buttons" class="social-buttons"></div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="tab-links">🔗 الروابط</button>
+        <button class="tab-btn" data-tab="tab-store">🏪 بيانات المحل</button>
+        <button class="tab-btn" data-tab="tab-password">🔒 كلمة المرور</button>
+        <button class="tab-btn" data-tab="tab-qr">▦ الباركود</button>
+        <button class="tab-btn" data-tab="tab-stats">📊 الإحصائيات</button>
+      </div>
 
-      <div class="page-footer">
-        © <span id="footer-year"></span> <span id="footer-name">Elra3y Store</span>
-        <br>
-        <a href="mano/" class="admin-link">لوحة الإدارة</a>
+      <!-- تبويب: الروابط -->
+      <div id="tab-links" class="tab-panel active">
+        <form id="links-form" class="card">
+          <h2>روابط منصات التواصل الاجتماعي</h2>
+          <div id="links-fields"></div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">حفظ التعديلات</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- تبويب: بيانات المحل -->
+      <div id="tab-store" class="tab-panel">
+        <form id="settings-form" class="card">
+          <h2>بيانات المحل</h2>
+
+          <div class="field">
+            <label for="setting-name">اسم المحل</label>
+            <input type="text" id="setting-name" placeholder="Elra3y Store">
+          </div>
+
+          <div class="field">
+            <label for="setting-desc">الوصف / العبارة الترحيبية</label>
+            <textarea id="setting-desc" placeholder="أهلاً بيك 👋 تابعنا وتواصل معانا من هنا"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="setting-phone">رقم الهاتف</label>
+            <input type="tel" id="setting-phone" placeholder="01xxxxxxxxx">
+          </div>
+
+          <div class="field">
+            <label>اللوجو</label>
+            <div class="image-field">
+              <img id="logo-preview" class="image-preview" alt="اللوجو">
+              <div class="image-controls">
+                <label class="file-input-label">
+                  📤 رفع صورة اللوجو
+                  <input type="file" id="logo-file" accept="image/*">
+                </label>
+                <button type="button" id="remove-logo" class="remove-image-btn">إزالة اللوجو</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>صورة الخلفية</label>
+            <div class="image-field">
+              <img id="bg-preview" class="image-preview" alt="الخلفية">
+              <div class="image-controls">
+                <label class="file-input-label">
+                  📤 رفع صورة الخلفية
+                  <input type="file" id="bg-file" accept="image/*">
+                </label>
+                <button type="button" id="remove-bg" class="remove-image-btn">إزالة الخلفية</button>
+              </div>
+            </div>
+            <div class="hint">اختياري — لو ماحطتش صورة هتفضل الخلفية الذهبية المتحركة الافتراضية.</div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">حفظ التعديلات</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- تبويب: كلمة المرور -->
+      <div id="tab-password" class="tab-panel">
+        <form id="password-form" class="card">
+          <h2>تغيير كلمة المرور</h2>
+          <div class="field">
+            <label for="current-password">كلمة المرور الحالية</label>
+            <input type="password" id="current-password" required autocomplete="current-password">
+          </div>
+          <div class="field">
+            <label for="new-password">كلمة المرور الجديدة</label>
+            <input type="password" id="new-password" required minlength="4" autocomplete="new-password">
+          </div>
+          <div class="field">
+            <label for="confirm-password">تأكيد كلمة المرور الجديدة</label>
+            <input type="password" id="confirm-password" required minlength="4" autocomplete="new-password">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">تغيير كلمة المرور</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- تبويب: الباركود -->
+      <div id="tab-qr" class="tab-panel">
+        <div class="card" style="text-align:center;">
+          <h2>باركود QR لصفحة الموقع</h2>
+          <div class="qr-card" style="margin:16px auto 0;">
+            <canvas id="admin-qr-canvas"></canvas>
+            <span class="qr-label" id="admin-qr-url"></span>
+            <div class="qr-actions">
+              <button type="button" id="admin-download-qr" class="qr-btn">تحميل QR</button>
+              <button type="button" id="admin-print-qr" class="qr-btn">طباعة</button>
+            </div>
+          </div>
+          <div class="hint" style="margin-top:16px;">
+            الباركود ده متاح هنا فقط في لوحة الإدارة، وأنت اللي تقدر تطبعه أو تحمّله. العميل عنده زر "مشاركة" بسيط في أعلى الصفحة الرئيسية لمشاركة الرابط أو الباركود.
+          </div>
+        </div>
+      </div>
+
+      <!-- تبويب: الإحصائيات -->
+      <div id="tab-stats" class="tab-panel">
+        <div class="card">
+          <h2>نظرة عامة</h2>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div id="stat-visits" class="value">0</div>
+              <div class="label">إجمالي الزيارات</div>
+            </div>
+            <div class="stat-box">
+              <div id="stat-total-clicks" class="value">0</div>
+              <div class="label">إجمالي الضغطات</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>الضغطات لكل منصة</h2>
+          <table class="clicks-table">
+            <thead>
+              <tr><th>المنصة</th><th>عدد الضغطات</th></tr>
+            </thead>
+            <tbody id="clicks-table-body"></tbody>
+          </table>
+          <div class="form-actions" style="margin-top:16px;">
+            <button type="button" id="reset-stats-btn" class="btn-danger-outline">تصفير الإحصائيات</button>
+          </div>
+        </div>
+        <div class="hint" style="text-align:center; color:var(--text-faint); font-size:11px;">
+          ملحوظة: الإحصائيات بتتسجل محليًا في المتصفح المستخدم لعرض الموقع.
+        </div>
       </div>
 
     </div>
@@ -83,10 +215,9 @@
 
   <div id="toast-container"></div>
 
-  <script src="assets/qrcode.js"></script>
-  <script src="assets/store-data.js"></script>
-  <script src="assets/icons.js"></script>
-  <script src="assets/particles.js"></script>
-  <script src="assets/app.js"></script>
+  <script src="../assets/qrcode.js"></script>
+  <script src="../assets/store-data.js"></script>
+  <script src="../assets/icons.js"></script>
+  <script src="../assets/admin.js"></script>
 </body>
 </html>
