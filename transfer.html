@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- مكتبات Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCKLONafXWbH03LLelgux6gux7fk1iIXEw",
+    authDomain: "cardelra3y.firebaseapp.com",
+    projectId: "cardelra3y",
+    storageBucket: "cardelra3y.firebasestorage.app",
+    messagingSenderId: "835206216217",
+    appId: "1:835206216217:web:72f59ec83c993565db8888",
+    measurementId: "G-MVL41CWKXN"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تحويل فودافون كاش | Elra3y Store</title>
+  <meta name="description" content="تحويل رصيد فودافون كاش لـ Elra3y Store">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <canvas id="particles-canvas"></canvas>
+  <div class="radial-glow"></div>
+  <div class="bg-image-layer"></div>
+
+  <div class="page">
+    <div class="content">
+
+      <!-- اللوجو واسم المحل -->
+      <div class="logo-section">
+        <div class="logo-wrap">
+          <div class="logo-ring"></div>
+          <div class="logo-circle">
+            <img id="logo-img" alt="" style="display:none;">
+            <span id="logo-initials" class="logo-initials"></span>
+          </div>
+        </div>
+        <h1 id="store-name" class="store-name">Elra3y Store</h1>
+        <p class="store-desc">تحويل رصيد فودافون كاش</p>
+        <div class="deco-line"><span></span><span></span><span></span></div>
+      </div>
+
+      <!-- كارد التحويل -->
+      <div class="social-buttons">
+        <button id="transfer-card" type="button" class="social-btn"
+          style="--accent:#E60000; --gradient:linear-gradient(135deg, #E60000 0%, #9c0000 100%); --accent-shadow:rgba(230,0,0,0.4); --accent-border:rgba(230,0,0,0.35); cursor:pointer;">
+          <span class="btn-glow"></span>
+          <span class="icon-wrap" id="transfer-arrow-wrap"></span>
+          <span class="btn-text">
+            <span class="btn-title">تحويل</span>
+            <span class="btn-sub">فودافون كاش</span>
+          </span>
+          <span class="btn-arrow" id="transfer-side-arrow"></span>
+        </button>
+      </div>
+
+      <!-- فورم إدخال المبلغ -->
+      <form id="transfer-form" class="card hidden" style="margin-top:16px;">
+        <h2>مبلغ التحويل</h2>
+        <div class="field">
+          <label for="transfer-amount">اكتب المبلغ اللي عايز تحوّله</label>
+          <input type="number" id="transfer-amount" inputmode="numeric" min="1" step="1" placeholder="مثال: 100" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">تحويل</button>
+        </div>
+      </form>
+
+      <div class="page-footer">
+        <a href="index.html" class="admin-link">⟵ رجوع للصفحة الرئيسية</a>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="assets/store-data.js"></script>
+  <script src="assets/icons.js"></script>
+  <script src="assets/particles.js"></script>
+  <script src="assets/transfer.js"></script>
+</body>
+</html>
