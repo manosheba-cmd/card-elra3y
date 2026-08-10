@@ -19,6 +19,8 @@ const DEFAULT_SETTINGS = {
   phone: '',
   logo: '',       
   background: '', 
+  vodafoneCashEnabled: false,
+  vodafoneCashNumber: '01008800558',
 };
 
 const PLATFORM_DEFS = [

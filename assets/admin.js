@@ -148,6 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('setting-name').value = s.name;
     document.getElementById('setting-desc').value = s.description;
     document.getElementById('setting-phone').value = s.phone;
+    document.getElementById('setting-vc-enabled').checked = !!s.vodafoneCashEnabled;
+    document.getElementById('setting-vc-number').value = s.vodafoneCashNumber || '';
 
     const logoPreview = document.getElementById('logo-preview');
     logoPreview.src = s.logo || '';
@@ -201,6 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
     s.name = document.getElementById('setting-name').value.trim() || DEFAULT_SETTINGS.name;
     s.description = document.getElementById('setting-desc').value.trim();
     s.phone = document.getElementById('setting-phone').value.trim();
+    s.vodafoneCashEnabled = document.getElementById('setting-vc-enabled').checked;
+    s.vodafoneCashNumber = document.getElementById('setting-vc-number').value.trim() || DEFAULT_SETTINGS.vodafoneCashNumber;
     if (pendingLogo !== undefined) s.logo = pendingLogo;
     if (pendingBg !== undefined) s.background = pendingBg;
     saveSettings(s);
